@@ -1,0 +1,560 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>srp — Secure Remote Password &#8212; Secure Remote Password 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Secure Remote Password’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Secure Remote Password’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Secure Remote Password 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">srp</span></code> — Secure Remote Password</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-srp">
+<span id="srp-secure-remote-password"></span><h1><a class="reference internal" href="#module-srp" title="srp: Secure Remote Password"><code class="xref py py-mod docutils literal notranslate"><span class="pre">srp</span></code></a> — Secure Remote Password<a class="headerlink" href="#module-srp" title="Permalink to this headline">¶</a></h1>
+<p>The Secure Remote Password protocol (SRP) is a cryptographically
+strong authentication protocol for password-based, mutual
+authentication over an insecure network connection. Successful SRP
+authentication requires both sides of the connection to have knowledge
+of the user’s password. In addition to password verification, the SRP
+protocol also performs a secure key exchange during the authentication
+process. This key may be used to protect network traffic via symmetric
+key encryption.</p>
+<p>SRP offers security and deployment advantages over other
+challenge-response protocols, such as Kerberos and SSL, in that it
+does not require trusted key servers or certificate infrastructures.
+Instead, small verification keys derived from each user’s password are
+stored and used by each SRP server application. SRP provides a
+near-ideal solution for many applications requiring simple and secure
+password authentication that does not rely on an external
+infrastructure.</p>
+<p>Another favorable aspect of the SRP protocol is that compromized
+verification keys are of little value to an attacker. Possesion of a
+verification key does not allow a user to be impersonated
+and it cannot be used to obtain the users password except by way of a
+computationally infeasible dictionary attack. A compromized key would,
+however, allow an attacker to impersonate the server side of an SRP
+authenticated connection. Consequently, care should be taken to
+prevent unauthorized access to verification keys for applications in
+which the client side relies on the server being genuine.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>SRP usage begins with <em>create_salted_verification_key()</em>. This function
+creates a salted verification key from the user’s password. The resulting salt
+and key are stored by the server application and will be used during the
+authentication process.</p>
+<p>The authentication process occurs as an exchange of messages between the clent
+and the server. The <a class="reference internal" href="#example"><span class="std std-ref">Example</span></a> below provides a simple demonstration of the
+protocol. A comprehensive description of the SRP protocol is contained in the
+<a class="reference internal" href="#protocol-description"><span class="std std-ref">SRP 6a Protocol Description</span></a> section.</p>
+<p>The <em>User</em> &amp; <em>Verifier</em> constructors, as well as the
+<em>create_salted_verification_key()</em> function, accept optional arguments
+to specify which hashing algorithm and prime number arguments should
+be used during the authentication process. These options may be used
+to tune the security/performance tradeoff for an application.
+Generally speaking, specifying arguments with a higher number of bits
+will result in a greater level of security. However, it will come at
+the cost of increased computation time. The default values of SHA1
+hashes and 2048 bit prime numbers strike a good balance between
+performance and security. These values should be sufficient for most
+applications. Regardless of which values are used, the parameters
+passed to the <em>User</em> and <em>Verifier</em> constructors must exactly match
+those passed to <em>create_salted_verification_key()</em></p>
+</section>
+<section id="constants">
+<span id="id1"></span><h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Hashing Algorithm Constants</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Hash Algorithm</p></th>
+<th class="head"><p>Number of Bits</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SHA1</p></td>
+<td><p>160</p></td>
+</tr>
+<tr class="row-odd"><td><p>SHA224</p></td>
+<td><p>224</p></td>
+</tr>
+<tr class="row-even"><td><p>SHA256</p></td>
+<td><p>256</p></td>
+</tr>
+<tr class="row-odd"><td><p>SHA384</p></td>
+<td><p>384</p></td>
+</tr>
+<tr class="row-even"><td><p>SHA512</p></td>
+<td><p>512</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Larger hashing algorithms will result in larger session keys.</p>
+</div>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Prime Number Constants</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Prime Number Size</p></th>
+<th class="head"><p>Number of Bits</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NG_1024</p></td>
+<td><p>1024</p></td>
+</tr>
+<tr class="row-odd"><td><p>NG_2048</p></td>
+<td><p>2048</p></td>
+</tr>
+<tr class="row-even"><td><p>NG_4096</p></td>
+<td><p>4096</p></td>
+</tr>
+<tr class="row-odd"><td><p>NG_8192</p></td>
+<td><p>8192</p></td>
+</tr>
+<tr class="row-even"><td><p>NG_CUSTOM</p></td>
+<td><p>User Supplied</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If NG_CUSTOM is used, the ‘n_hex’ and ‘g_hex’ parameters are required.
+These parameters must be ASCII text containing hexidecimal notation of the
+prime number ‘n_hex’ and the corresponding generator number ‘g_hex’. Appendix
+A of RFC 5054 contains several large prime number, generator pairs that may
+be used with NG_CUSTOM.</p>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="srp.create_salted_verification_key">
+<span class="sig-prename descclassname"><span class="pre">srp.</span></span><span class="sig-name descname"><span class="pre">create_salted_verification_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">hash_alg=SHA1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng_type=NG_2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_hex=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_hex=None</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.create_salted_verification_key" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>username</em> Name of the user</p>
+<p><em>password</em> Plaintext user password</p>
+<p><em>hash_alg</em>, <em>ng_type</em>, <em>n_hex</em>, <em>g_hex</em> Refer to the <a class="reference internal" href="#constants"><span class="std std-ref">Constants</span></a> section.</p>
+<p>Generate a salted verification key for the given username and password and return the tuple:
+(salt_bytes, verification_key_bytes)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="srp.rfc5054_enable">
+<span class="sig-prename descclassname"><span class="pre">srp.</span></span><span class="sig-name descname"><span class="pre">rfc5054_enable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#srp.rfc5054_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>enable</em> True if compatibility with RFC5054 is required, False otherwise.</p>
+<p>For backward compatibility, pysrp by default does not conform to RFC5054. If you need compatibility
+with RFC5054, just call this function before using pysrp.</p>
+</dd></dl>
+
+</section>
+<section id="verifier-objects">
+<h2><a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> Objects<a class="headerlink" href="#verifier-objects" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> object is used to verify the identity of a remote
+user.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The standard SRP 6 protocol allows only one password attempt per
+connection.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="srp.Verifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">srp.</span></span><span class="sig-name descname"><span class="pre">Verifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_A</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">hash_alg=SHA1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng_type=NG_2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_hex=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_hex=None</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>username</em> Name of the remote user being authenticated.</p>
+<p><em>bytes_s</em> Salt generated by <a class="reference internal" href="#srp.create_salted_verification_key" title="srp.create_salted_verification_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_salted_verification_key()</span></code></a>.</p>
+<p><em>bytes_v</em> Verification Key generated by <a class="reference internal" href="#srp.create_salted_verification_key" title="srp.create_salted_verification_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_salted_verification_key()</span></code></a>.</p>
+<p><em>bytes_A</em> Challenge from the remote user. Generated by
+<a class="reference internal" href="#srp.User.start_authentication" title="srp.User.start_authentication"><code class="xref py py-meth docutils literal notranslate"><span class="pre">User.start_authentication()</span></code></a></p>
+<p><em>hash_alg</em>, <em>ng_type</em>, <em>n_hex</em>, <em>g_hex</em> Refer to the <a class="reference internal" href="#constants"><span class="std std-ref">Constants</span></a> section.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.Verifier.authenticated">
+<span class="sig-name descname"><span class="pre">authenticated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier.authenticated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the authentication succeeded. False
+otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.Verifier.get_username">
+<span class="sig-name descname"><span class="pre">get_username</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier.get_username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the user this <a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> object is for.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.Verifier.get_session_key">
+<span class="sig-name descname"><span class="pre">get_session_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier.get_session_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the session key for an authenticated user or None if the
+authentication failed or has not yet completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.Verifier.get_challenge">
+<span class="sig-name descname"><span class="pre">get_challenge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier.get_challenge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return (bytes_s, bytes_B) on success or (None, None) if
+authentication has failed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.Verifier.verify_session">
+<span class="sig-name descname"><span class="pre">verify_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_M</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#srp.Verifier.verify_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete the <a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> side of the authentication
+process. If the authentication succeded the return result,
+bytes_H_AMK should be returned to the remote user. On failure,
+this method returns None.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="user-objects">
+<h2><a class="reference internal" href="#srp.User" title="srp.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a> Objects<a class="headerlink" href="#user-objects" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#srp.User" title="srp.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a> object is used to prove a user’s identity to a remote <a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> and
+verifiy that the remote <a class="reference internal" href="#srp.Verifier" title="srp.Verifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code></a> knows the verification key associated with
+the user’s password.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="srp.User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">srp.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">hash_alg=SHA1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng_type=NG_2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_hex=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_hex=None</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.User" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>username</em> Name of the user being authenticated.</p>
+<p><em>password</em> Password for the user.</p>
+<p><em>hash_alg</em>, <em>ng_type</em>, <em>n_hex</em>, <em>g_hex</em> Refer to the <a class="reference internal" href="#constants"><span class="std std-ref">Constants</span></a> section.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.authenticated">
+<span class="sig-name descname"><span class="pre">authenticated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.authenticated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if authentication succeeded. False
+otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.get_username">
+<span class="sig-name descname"><span class="pre">get_username</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.get_username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the username passed to the constructor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.get_session_key">
+<span class="sig-name descname"><span class="pre">get_session_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.get_session_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the session key if authentication succeeded or None if the
+authentication failed or has not yet completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.start_authentication">
+<span class="sig-name descname"><span class="pre">start_authentication</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.start_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return (username, bytes_A). These should be passed to the
+constructor of the remote <code class="xref py py-class docutils literal notranslate"><span class="pre">Verifer</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.process_challenge">
+<span class="sig-name descname"><span class="pre">process_challenge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bytes_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.process_challenge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processe the challenge returned
+by <a class="reference internal" href="#srp.Verifier.get_challenge" title="srp.Verifier.get_challenge"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Verifier.get_challenge()</span></code></a> on success this method
+returns bytes_M that should be sent
+to <a class="reference internal" href="#srp.Verifier.verify_session" title="srp.Verifier.verify_session"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Verifier.verify_session()</span></code></a> if authentication failed,
+it returns None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="srp.User.verify_session">
+<span class="sig-name descname"><span class="pre">verify_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bytes_H_AMK</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#srp.User.verify_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete the <a class="reference internal" href="#srp.User" title="srp.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a> side of the authentication process. By
+verifying the <em>bytes_H_AMK</em> value returned by
+<a class="reference internal" href="#srp.Verifier.verify_session" title="srp.Verifier.verify_session"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Verifier.verify_session()</span></code></a>.  If the authentication succeded
+<a class="reference internal" href="#srp.User.authenticated" title="srp.User.authenticated"><code class="xref py py-meth docutils literal notranslate"><span class="pre">authenticated()</span></code></a> will return True</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="example">
+<span id="id2"></span><h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Simple Usage Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">srp</span>
+
+<span class="c1"># The salt and verifier returned from srp.create_salted_verification_key() should be</span>
+<span class="c1"># stored on the server.</span>
+<span class="n">salt</span><span class="p">,</span> <span class="n">vkey</span> <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">create_salted_verification_key</span><span class="p">(</span> <span class="s1">&#39;testuser&#39;</span><span class="p">,</span> <span class="s1">&#39;testpassword&#39;</span> <span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">AuthenticationFailed</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># ~~~ Begin Authentication ~~~</span>
+
+<span class="n">usr</span>      <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">User</span><span class="p">(</span> <span class="s1">&#39;testuser&#39;</span><span class="p">,</span> <span class="s1">&#39;testpassword&#39;</span> <span class="p">)</span>
+<span class="n">uname</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="n">usr</span><span class="o">.</span><span class="n">start_authentication</span><span class="p">()</span>
+
+<span class="c1"># The authentication process can fail at each step from this</span>
+<span class="c1"># point on. To comply with the SRP protocol, the authentication</span>
+<span class="c1"># process should be aborted on the first failure.</span>
+
+<span class="c1"># Client =&gt; Server: username, A</span>
+<span class="n">svr</span>      <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">Verifier</span><span class="p">(</span> <span class="n">uname</span><span class="p">,</span> <span class="n">salt</span><span class="p">,</span> <span class="n">vkey</span><span class="p">,</span> <span class="n">A</span> <span class="p">)</span>
+<span class="n">s</span><span class="p">,</span><span class="n">B</span>      <span class="o">=</span> <span class="n">svr</span><span class="o">.</span><span class="n">get_challenge</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">B</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">AuthenticationFailed</span><span class="p">()</span>
+
+<span class="c1"># Server =&gt; Client: s, B</span>
+<span class="n">M</span>        <span class="o">=</span> <span class="n">usr</span><span class="o">.</span><span class="n">process_challenge</span><span class="p">(</span> <span class="n">s</span><span class="p">,</span> <span class="n">B</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">AuthenticationFailed</span><span class="p">()</span>
+
+<span class="c1"># Client =&gt; Server: M</span>
+<span class="n">HAMK</span>     <span class="o">=</span> <span class="n">svr</span><span class="o">.</span><span class="n">verify_session</span><span class="p">(</span> <span class="n">M</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">HAMK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">AuthenticationFailed</span><span class="p">()</span>
+
+<span class="c1"># Server =&gt; Client: HAMK</span>
+<span class="n">usr</span><span class="o">.</span><span class="n">verify_session</span><span class="p">(</span> <span class="n">HAMK</span> <span class="p">)</span>
+
+<span class="c1"># At this point the authentication process is complete.</span>
+
+<span class="k">assert</span> <span class="n">usr</span><span class="o">.</span><span class="n">authenticated</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">svr</span><span class="o">.</span><span class="n">authenticated</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="implementation-notes">
+<h2>Implementation Notes<a class="headerlink" href="#implementation-notes" title="Permalink to this headline">¶</a></h2>
+<p>This implementation of SRP consists of both a pure-python module and a C-based
+implementation that is approximately 10x faster. By default, the
+C-implementation will be used if it is available. An additional benefit of the C
+implementation is that it can take advantage of of multiple CPUs. For cases in
+which the number of connections per second is an issue, using a small pool of
+threads to perform the authentication steps on multi-core systems will yield a
+substantial performance increase.</p>
+</section>
+<section id="srp-6a-protocol-description">
+<span id="protocol-description"></span><h2>SRP 6a Protocol Description<a class="headerlink" href="#srp-6a-protocol-description" title="Permalink to this headline">¶</a></h2>
+<p>The original SRP protocol, known as SRP-3, is defined in
+RFC 2945. This implementation, however, uses SRP-6a which is a slight
+improvement over SRP-3.  The authoritative definition for the SRP-6a
+protocol is available at <a class="reference external" href="http://srp.stanford.edu">http://srp.stanford.edu</a>. An additional
+resource is RFC 5054 which covers the integration of SRP into
+TLS. This RFC is the source of hashing strategy and the predefined N
+and g constants used in this implementation.</p>
+<p>The following is a complete description of the SRP-6a protocol as implemented by
+this library. Note that the ^ symbol indicates exponentiaion and the | symbol
+indicates concatenation.</p>
+<p class="rubric">Primary Variables used in SRP 6a</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 88%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variables</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>N</p></td>
+<td><p>A large, safe prime (N = 2q+1, where q is a Sophie Germain prime)
+All arithmetic is performed in the field of integers modulo N</p></td>
+</tr>
+<tr class="row-odd"><td><p>g</p></td>
+<td><p>A generator modulo N</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Small salt for the verification key</p></td>
+</tr>
+<tr class="row-odd"><td><p>I</p></td>
+<td><p>Username</p></td>
+</tr>
+<tr class="row-even"><td><p>p</p></td>
+<td><p>Cleartext password</p></td>
+</tr>
+<tr class="row-odd"><td><p>H()</p></td>
+<td><p>One-way hash function</p></td>
+</tr>
+<tr class="row-even"><td><p>a,b</p></td>
+<td><p>Secret, random values</p></td>
+</tr>
+<tr class="row-odd"><td><p>K</p></td>
+<td><p>Session key</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Derived Values used in SRP 6a</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 51%" />
+<col style="width: 49%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Derived Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>k = H(N,g)</p></td>
+<td><p>Multiplier Parameter</p></td>
+</tr>
+<tr class="row-odd"><td><p>A = g^a</p></td>
+<td><p>Public ephemeral value</p></td>
+</tr>
+<tr class="row-even"><td><p>B = kv + g^b</p></td>
+<td><p>Public ephemeral value</p></td>
+</tr>
+<tr class="row-odd"><td><p>x = H(s, H( I | ‘:’ | p ))</p></td>
+<td><p>Private key (as defined by RFC 5054)</p></td>
+</tr>
+<tr class="row-even"><td><p>v = g^x</p></td>
+<td><p>Password verifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>u = H(A,B)</p></td>
+<td><p>Random scrambling parameter</p></td>
+</tr>
+<tr class="row-even"><td><p>M = H(H(N) xor H(g), H(I), s, A, B, K)</p></td>
+<td><p>Session key verifier</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Protocol Description</p>
+<p>The server stores the password verifier <em>v</em>. Authentication begins with a
+message from the client:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">-&gt;</span> <span class="n">server</span><span class="p">:</span> <span class="n">I</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="n">g</span><span class="o">^</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>The server replies with the verifier salt and challenge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="o">-&gt;</span> <span class="n">client</span><span class="p">:</span> <span class="n">s</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">kv</span> <span class="o">+</span> <span class="n">g</span><span class="o">^</span><span class="n">b</span>
+</pre></div>
+</div>
+<p>At this point, both the client and server calculate the shared session key:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">&amp;</span> <span class="n">server</span><span class="p">:</span> <span class="n">u</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span> <span class="p">(</span><span class="n">Av</span><span class="o">^</span><span class="n">u</span><span class="p">)</span> <span class="o">^</span> <span class="n">b</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span> <span class="n">s</span><span class="p">,</span> <span class="n">H</span><span class="p">(</span> <span class="n">I</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">p</span> <span class="p">)</span> <span class="p">)</span>
+<span class="n">client</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">kg</span><span class="o">^</span><span class="n">x</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">ux</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Now both parties have a shared, strong session key <em>K</em>. To complete
+authentication they need to prove to each other that their keys match:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">-&gt;</span> <span class="n">server</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span><span class="n">H</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="n">xor</span> <span class="n">H</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="n">H</span><span class="p">(</span><span class="n">I</span><span class="p">),</span> <span class="n">s</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+<span class="n">server</span> <span class="o">-&gt;</span> <span class="n">client</span><span class="p">:</span> <span class="n">H</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>SRP 6a requires the two parties to use the following safeguards:</p>
+<ol class="arabic simple">
+<li><p>The client will abort if it recieves B == 0 (mod N) or u == 0</p></li>
+<li><p>The server will abort if it detects A == 0 (mod N)</p></li>
+<li><p>The client must show its proof of K first. If the server detects that this
+proof is incorrect it must abort without showing its own proof of K</p></li>
+</ol>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">srp</span></code> — Secure Remote Password</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#constants">Constants</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#verifier-objects"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verifier</span></code> Objects</a></li>
+<li><a class="reference internal" href="#user-objects"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> Objects</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#implementation-notes">Implementation Notes</a></li>
+<li><a class="reference internal" href="#srp-6a-protocol-description">SRP 6a Protocol Description</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Welcome to Secure Remote Password’s documentation!</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/srp.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Secure Remote Password’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Secure Remote Password 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">srp</span></code> — Secure Remote Password</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2011, Tom Cocagne.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>
