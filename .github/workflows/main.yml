@@ -24,8 +24,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-          
-      - name: Build sphinx docs
-        uses: cascode-labs/build-sphinx-action@v0.2.3
+      
+      - name: Sphinx to GitHub Pages
+        uses: sphinx-notes/pages@2.0
         with:
-          docs_path: 'srp/doc'
+          # Relative path under $repository_path to documentation source files
+          documentation_path: 'srp/doc'
